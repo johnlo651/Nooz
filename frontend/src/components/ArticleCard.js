@@ -116,16 +116,30 @@ export const ArticleCard = ({ article, featured = false }) => {
           <span className="text-foreground">{article.summary?.summary_read_time_minutes || 1} min</span>
         </div>
         
-        <button 
-          className="p-2 hover:bg-secondary transition-colors duration-150"
-          onClick={(e) => {
-            e.preventDefault();
-            // Bookmark functionality
-          }}
-          data-testid="bookmark-button"
-        >
-          <Bookmark className="h-4 w-4" />
-        </button>
+        <div className="flex items-center gap-2">
+          <button 
+            onClick={(e) => {
+              e.preventDefault();
+              speak(article);
+            }}
+            className={`p-2 hover:bg-secondary transition-colors duration-150 ${
+              isCurrentlyPlaying ? 'text-primary' : ''
+            }`}
+            data-testid="tts-button"
+          >
+            <Headphones className="h-4 w-4" />
+          </button>
+          <button 
+            className="p-2 hover:bg-secondary transition-colors duration-150"
+            onClick={(e) => {
+              e.preventDefault();
+              // Bookmark functionality
+            }}
+            data-testid="bookmark-button"
+          >
+            <Bookmark className="h-4 w-4" />
+          </button>
+        </div>
       </div>
     </Link>
   );
