@@ -12,26 +12,24 @@ export const AdminDashboard = () => {
   const [scrapeCategory, setScrapeCategory] = useState('');
   const [scrapeResults, setScrapeResults] = useState(null);
 
-  const loadStats = async () => {
-    try {
-      const res = await analyticsAPI.getStats();
-      setStats(res.data);
-    } catch (error) {
-      console.error('Error loading stats:', error);
-    }
-  };
-
   useEffect(() => {
-    if (!user) {
-      navigate('/admin/login');
-      return;
-    }
-    if (!isAdmin) {
-      navigate('/');
-      return;
-    }
-    loadStats();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const checkAuthAndLoad = async () => {
+      if (!user) {
+        navigate('/admin/login');
+        return;
+      }
+      if (!isAdmin) {
+        navigate('/');
+        return;
+      }
+      try {
+        const res = await analyticsAPI.getStats();
+        setStats(res.data);
+      } catch (error) {
+        console.error('Error loading stats:', error);
+      }
+    };
+    checkAuthAndLoad();
   }, [user, isAdmin, navigate]);
 
   const handleScrape = async () => {
@@ -40,13 +38,18 @@ export const AdminDashboard = () => {
     try {
       const res = await scrapeAPI.scrape({ category: scrapeCategory || null });
       setScrapeResults(res.data);
-      loadStats();
+      const statsRes = await analyticsAPI.getStats();
+      setStats(statsRes.data);
     } catch (error) {
       console.error('Error scraping:', error);
     } finally {
       setScraping(false);
     }
   };
+
+  if (!user || !isAdmin) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-background">
