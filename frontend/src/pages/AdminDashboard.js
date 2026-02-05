@@ -12,6 +12,15 @@ export const AdminDashboard = () => {
   const [scrapeCategory, setScrapeCategory] = useState('');
   const [scrapeResults, setScrapeResults] = useState(null);
 
+  const loadStats = async () => {
+    try {
+      const res = await analyticsAPI.getStats();
+      setStats(res.data);
+    } catch (error) {
+      console.error('Error loading stats:', error);
+    }
+  };
+
   useEffect(() => {
     if (!user) {
       navigate('/admin/login');
@@ -22,16 +31,8 @@ export const AdminDashboard = () => {
       return;
     }
     loadStats();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, isAdmin, navigate]);
-
-  const loadStats = async () => {
-    try {
-      const res = await analyticsAPI.getStats();
-      setStats(res.data);
-    } catch (error) {
-      console.error('Error loading stats:', error);
-    }
-  };
 
   const handleScrape = async () => {
     setScraping(true);
