@@ -1,9 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Clock, Eye, Bookmark } from 'lucide-react';
+import { Clock, Eye, Bookmark, Headphones } from 'lucide-react';
+import { useTTS } from '../utils/tts';
 
 export const ArticleCard = ({ article, featured = false }) => {
+  const { speak, isPlaying, currentArticle } = useTTS();
   const summary = article.summary?.executive_summary || article.excerpt || '';
+  const isCurrentlyPlaying = isPlaying && currentArticle?.id === article.id;
   
   if (featured) {
     return (
