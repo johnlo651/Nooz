@@ -22,7 +22,7 @@ export const AdminDashboard = () => {
       return;
     }
     loadStats();
-  }, [user, isAdmin]);
+  }, [user, isAdmin, navigate]);
 
   const loadStats = async () => {
     try {
