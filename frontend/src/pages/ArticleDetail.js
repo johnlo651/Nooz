@@ -3,16 +3,20 @@ import { useParams, Link } from 'react-router-dom';
 import { Header, Footer } from '../components/Layout';
 import { articlesAPI, bookmarksAPI, analyticsAPI } from '../utils/api';
 import { useAuth } from '../utils/auth';
+import { useTTS } from '../utils/tts';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
-import { Clock, Eye, ExternalLink, Share2, Bookmark, BookmarkCheck } from 'lucide-react';
+import { Clock, Eye, ExternalLink, Share2, Bookmark, BookmarkCheck, Headphones } from 'lucide-react';
 import { Loader2 } from 'lucide-react';
 
 export const ArticleDetail = () => {
   const { id } = useParams();
   const { user } = useAuth();
+  const { speak, isPlaying, currentArticle } = useTTS();
   const [article, setArticle] = useState(null);
   const [loading, setLoading] = useState(true);
   const [bookmarked, setBookmarked] = useState(false);
+  
+  const isCurrentlyPlaying = isPlaying && currentArticle?.id === id;
 
   useEffect(() => {
     loadArticle();
