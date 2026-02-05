@@ -22,6 +22,26 @@ export const AdminSources = () => {
     categories: []
   });
 
+  useEffect(() => {
+    const checkAuthAndLoad = async () => {
+      if (!user) {
+        navigate('/admin/login');
+        return;
+      }
+      if (!isAdmin) {
+        navigate('/');
+        return;
+      }
+      try {
+        const res = await sourcesAPI.getSources();
+        setSources(res.data);
+      } catch (error) {
+        console.error('Error loading sources:', error);
+      }
+    };
+    checkAuthAndLoad();
+  }, [user, isAdmin, navigate]);
+
   const loadSources = async () => {
     try {
       const res = await sourcesAPI.getSources();
@@ -30,19 +50,6 @@ export const AdminSources = () => {
       console.error('Error loading sources:', error);
     }
   };
-
-  useEffect(() => {
-    if (!user) {
-      navigate('/admin/login');
-      return;
-    }
-    if (!isAdmin) {
-      navigate('/');
-      return;
-    }
-    loadSources();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, isAdmin, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -107,6 +114,10 @@ export const AdminSources = () => {
         : [...prev.categories, cat]
     }));
   };
+
+  if (!user || !isAdmin) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-background">
