@@ -125,6 +125,18 @@ export const ArticleDetail = () => {
                 <Eye className="h-4 w-4" />
                 <span>ORIG: {article.read_time_minutes || 5}m</span>
               </div>
+              <button
+                onClick={() => speak(article)}
+                className={`flex items-center gap-2 px-4 py-2 border transition-colors duration-150 ${
+                  isCurrentlyPlaying 
+                    ? 'border-primary bg-primary text-black' 
+                    : 'border-border hover:border-primary hover:text-primary'
+                }`}
+                data-testid="tts-listen-button"
+              >
+                <Headphones className="h-4 w-4" />
+                <span className="uppercase">Listen</span>
+              </button>
             </div>
             
             <div className="flex items-center gap-2">
