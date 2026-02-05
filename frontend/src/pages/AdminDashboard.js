@@ -13,24 +13,12 @@ export const AdminDashboard = () => {
   const [scrapeResults, setScrapeResults] = useState(null);
 
   useEffect(() => {
-    const checkAuthAndLoad = async () => {
-      if (!user) {
-        navigate('/admin/login');
-        return;
-      }
-      if (!isAdmin) {
-        navigate('/');
-        return;
-      }
-      try {
-        const res = await analyticsAPI.getStats();
-        setStats(res.data);
-      } catch (error) {
-        console.error('Error loading stats:', error);
-      }
-    };
-    checkAuthAndLoad();
-  }, [user, isAdmin, navigate]);
+    if (!user || !isAdmin) return;
+    
+    analyticsAPI.getStats()
+      .then(res => setStats(res.data))
+      .catch(error => console.error('Error loading stats:', error));
+  }, [user, isAdmin]);
 
   const handleScrape = async () => {
     setScraping(true);
@@ -47,7 +35,13 @@ export const AdminDashboard = () => {
     }
   };
 
-  if (!user || !isAdmin) {
+  if (!user) {
+    navigate('/admin/login');
+    return null;
+  }
+
+  if (!isAdmin) {
+    navigate('/');
     return null;
   }
 
