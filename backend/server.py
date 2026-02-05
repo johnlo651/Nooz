@@ -218,13 +218,49 @@ async def fetch_rss_feed(url: str) -> Optional[Dict]:
     return None
 
 
-async def extract_article_content(url: str) -> tuple[Optional[str], Optional[str]]:
+async def extract_article_content(url: str) -> tuple[Optional[str], Optional[str], Optional[str]]:
     try:
         async with aiohttp.ClientSession() as session:
             async with session.get(url, timeout=aiohttp.ClientTimeout(total=20)) as response:
                 if response.status == 200:
                     html = await response.text()
                     soup = BeautifulSoup(html, 'lxml')
+                    
+                    # Extract featured image first
+                    image_url = None
+                    
+                    # Try og:image meta tag
+                    og_image = soup.find('meta', property='og:image')
+                    if og_image and og_image.get('content'):
+                        image_url = og_image['content']
+                    
+                    # Try twitter:image meta tag
+                    if not image_url:
+                        twitter_image = soup.find('meta', attrs={'name': 'twitter:image'})
+                        if twitter_image and twitter_image.get('content'):
+                            image_url = twitter_image['content']
+                    
+                    # Try article:image meta tag
+                    if not image_url:
+                        article_image = soup.find('meta', property='article:image')
+                        if article_image and article_image.get('content'):
+                            image_url = article_image['content']
+                    
+                    # Try to find first large image in article content
+                    if not image_url:
+                        article_elem = soup.find(['article', 'main'])
+                        if article_elem:
+                            img = article_elem.find('img')
+                            if img and img.get('src'):
+                                img_src = img['src']
+                                # Make absolute URL if relative
+                                if img_src.startswith('//'):
+                                    img_src = 'https:' + img_src
+                                elif img_src.startswith('/'):
+                                    from urllib.parse import urlparse
+                                    parsed = urlparse(url)
+                                    img_src = f"{parsed.scheme}://{parsed.netloc}{img_src}"
+                                image_url = img_src
                     
                     # Remove script and style elements
                     for script in soup(["script", "style", "nav", "header", "footer"]):
@@ -248,10 +284,10 @@ async def extract_article_content(url: str) -> tuple[Optional[str], Optional[str
                     # Get excerpt (first 300 chars)
                     excerpt = content[:300] + "..." if len(content) > 300 else content
                     
-                    return content[:15000], excerpt
+                    return content[:15000], excerpt, image_url
     except Exception as e:
         logger.error(f"Error extracting content from {url}: {e}")
-    return None, None
+    return None, None, None
 
 
 def calculate_read_time(text: str) -> int:
