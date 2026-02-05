@@ -315,14 +315,14 @@ async def scrape_source(source: dict) -> ScrapeResult:
                 if existing:
                     continue
                 
-                # Extract content
-                content, excerpt = await extract_article_content(article_url)
+                # Extract content and image from article page
+                content, excerpt, scraped_image_url = await extract_article_content(article_url)
                 
-                # Get image
-                image_url = None
-                if hasattr(entry, 'media_content') and entry.media_content:
+                # Get image - prioritize scraped image, fallback to RSS feed metadata
+                image_url = scraped_image_url
+                if not image_url and hasattr(entry, 'media_content') and entry.media_content:
                     image_url = entry.media_content[0].get('url')
-                elif hasattr(entry, 'enclosures') and entry.enclosures:
+                if not image_url and hasattr(entry, 'enclosures') and entry.enclosures:
                     image_url = entry.enclosures[0].get('href')
                 
                 # Create article
