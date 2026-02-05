@@ -47,21 +47,18 @@ export const ArticleCard = ({ article, featured = false }) => {
           </p>
           
           <div className="flex items-center gap-4 terminal-text text-muted-foreground">
-            <div className="flex items-center gap-1">
-              <Clock className="h-3 w-3" />
-              <span>AI: {article.summary?.summary_read_time_minutes || 1}m</span>
-            </div>
-            <span className="text-primary">vs</span>
-            <div className="flex items-center gap-1">
-              <Eye className="h-3 w-3" />
-              <span>ORIG: {article.read_time_minutes || 5}m</span>
+            <div className="flex items-center gap-2">
+              <span className="line-through opacity-50">{article.read_time_minutes || 5} min</span>
+              <span className="text-primary">→</span>
+              <span className="text-foreground font-bold">{article.summary?.summary_read_time_minutes || 1} min read</span>
+              <span className="text-primary">({(article.read_time_minutes || 5) - (article.summary?.summary_read_time_minutes || 1)} min saved)</span>
             </div>
             <button
               onClick={(e) => {
                 e.preventDefault();
                 speak(article);
               }}
-              className={`flex items-center gap-1 px-2 py-1 border transition-colors duration-150 ${
+              className={`flex items-center gap-2 px-3 py-1 border transition-colors duration-150 ${
                 isCurrentlyPlaying 
                   ? 'border-primary bg-primary text-black' 
                   : 'border-border hover:border-primary hover:text-primary'
