@@ -123,6 +123,20 @@ export const ArticleCard = ({ article, featured = false }) => {
             <Eye className="h-3 w-3" />
             <span>{article.read_time_minutes || 5}m</span>
           </div>
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              speak(article);
+            }}
+            className={`flex items-center gap-1 px-2 py-1 border transition-colors duration-150 ${
+              isCurrentlyPlaying 
+                ? 'border-primary bg-primary text-black' 
+                : 'border-border hover:border-primary hover:text-primary'
+            }`}
+            data-testid="tts-button"
+          >
+            <Headphones className="h-3 w-3" />
+          </button>
         </div>
         
         <button 
