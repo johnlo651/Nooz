@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../utils/auth';
 import { scrapeAPI, analyticsAPI } from '../utils/api';
 import { Terminal, Loader2, Activity, Eye, Clock, TrendingUp } from 'lucide-react';
 
 export const AdminDashboard = () => {
-  const navigate = useNavigate();
   const { user, logout, isAdmin } = useAuth();
   const [stats, setStats] = useState(null);
   const [scraping, setScraping] = useState(false);
@@ -13,11 +12,11 @@ export const AdminDashboard = () => {
   const [scrapeResults, setScrapeResults] = useState(null);
 
   useEffect(() => {
-    if (!user || !isAdmin) return;
-    
-    analyticsAPI.getStats()
-      .then(res => setStats(res.data))
-      .catch(error => console.error('Error loading stats:', error));
+    if (user && isAdmin) {
+      analyticsAPI.getStats()
+        .then(res => setStats(res.data))
+        .catch(error => console.error('Error loading stats:', error));
+    }
   }, [user, isAdmin]);
 
   const handleScrape = async () => {
@@ -35,15 +34,8 @@ export const AdminDashboard = () => {
     }
   };
 
-  if (!user) {
-    navigate('/admin/login');
-    return null;
-  }
-
-  if (!isAdmin) {
-    navigate('/');
-    return null;
-  }
+  if (!user) return <Navigate to="/admin/login" replace />;
+  if (!isAdmin) return <Navigate to="/" replace />;
 
   return (
     <div className="min-h-screen bg-background">
@@ -55,14 +47,6 @@ export const AdminDashboard = () => {
           </Link>
           
           <div className="flex items-center gap-4">
-            <Link 
-              to="/admin/sources" 
-              className="terminal-text hover:text-primary transition-colors duration-150"
-              data-testid="sources-link"
-            >
-              SOURCES
-            </Link>
-            <div className="h-4 w-px bg-border"></div>
             <span className="terminal-text text-muted-foreground">{user?.email}</span>
             <button 
               onClick={logout} 
