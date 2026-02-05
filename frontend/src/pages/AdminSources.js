@@ -22,26 +22,6 @@ export const AdminSources = () => {
     categories: []
   });
 
-  useEffect(() => {
-    const checkAuthAndLoad = async () => {
-      if (!user) {
-        navigate('/admin/login');
-        return;
-      }
-      if (!isAdmin) {
-        navigate('/');
-        return;
-      }
-      try {
-        const res = await sourcesAPI.getSources();
-        setSources(res.data);
-      } catch (error) {
-        console.error('Error loading sources:', error);
-      }
-    };
-    checkAuthAndLoad();
-  }, [user, isAdmin, navigate]);
-
   const loadSources = async () => {
     try {
       const res = await sourcesAPI.getSources();
@@ -50,6 +30,21 @@ export const AdminSources = () => {
       console.error('Error loading sources:', error);
     }
   };
+
+  useEffect(() => {
+    if (!user || !isAdmin) return;
+    loadSources();
+  }, [user, isAdmin]);
+
+  if (!user) {
+    navigate('/admin/login');
+    return null;
+  }
+
+  if (!isAdmin) {
+    navigate('/');
+    return null;
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
