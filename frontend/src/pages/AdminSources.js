@@ -22,6 +22,15 @@ export const AdminSources = () => {
     categories: []
   });
 
+  const loadSources = async () => {
+    try {
+      const res = await sourcesAPI.getSources();
+      setSources(res.data);
+    } catch (error) {
+      console.error('Error loading sources:', error);
+    }
+  };
+
   useEffect(() => {
     if (!user) {
       navigate('/admin/login');
@@ -32,16 +41,8 @@ export const AdminSources = () => {
       return;
     }
     loadSources();
-  }, [user, isAdmin]);
-
-  const loadSources = async () => {
-    try {
-      const res = await sourcesAPI.getSources();
-      setSources(res.data);
-    } catch (error) {
-      console.error('Error loading sources:', error);
-    }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, isAdmin, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
