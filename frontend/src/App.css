@@ -1,34 +1,69 @@
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+.card-brutal {
+  @apply border border-border bg-card p-6 transition-colors duration-150;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+.card-brutal:hover {
+  @apply border-primary;
 }
 
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+.btn-primary {
+  @apply bg-primary text-primary-foreground hover:bg-white hover:text-black rounded-none uppercase font-mono text-sm tracking-wider px-6 py-3 transition-colors duration-75 font-medium;
 }
 
-.App-link {
-    color: #61dafb;
+.btn-secondary {
+  @apply border border-border bg-transparent hover:border-primary hover:text-primary rounded-none uppercase font-mono text-sm px-6 py-3 transition-colors duration-150;
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+.tag {
+  @apply border border-border px-2 py-1 text-xs font-mono uppercase tracking-widest hover:bg-secondary transition-colors duration-150;
+}
+
+.tag-accent {
+  @apply border border-primary text-primary px-2 py-1 text-xs font-mono uppercase tracking-widest hover:bg-primary hover:text-black transition-colors duration-150;
+}
+
+.terminal-text {
+  @apply font-mono text-xs md:text-sm tracking-wide;
+}
+
+.input-brutal {
+  @apply bg-black border border-border rounded-none focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-muted-foreground font-mono px-4 py-2 transition-colors duration-150;
+}
+
+.noise-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+.scan-line {
+  @apply bg-gradient-to-r from-transparent via-primary to-transparent opacity-50;
+  animation: scan 2s linear infinite;
+}
+
+@keyframes scan {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.masonry-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .masonry-grid {
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  }
 }
